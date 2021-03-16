@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:validation="http://www.mulesoft.org/schema/mule/validation"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mule/validation/current/mule-validation.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="d3b668bf-d894-4f84-a54e-d45cd7449911" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<http:request-config name="HTTP_Request_configuration" doc:name="HTTP Request configuration" doc:id="85f29284-5415-4404-a6dd-8bfb8eabeb67" >
+		<http:request-connection host="localhost" port="8081" />
+	</http:request-config>
+	<flow name="getFruits" doc:id="4e549651-e404-4971-b356-a742cca56aca">
+		<http:listener doc:name="getFruits" doc:id="f08a36e7-dfaa-4a71-a484-7df738f9bd8d" config-ref="HTTP_Listener_config" path="/fruits" allowedMethods="GET" />
+		<scatter-gather doc:name="Scatter-Gather" doc:id="0ae8fa1f-61cc-405e-96f9-12040241f85d">
+			<route>
+				<flow-ref doc:name="Apple" doc:id="ee783604-f4cf-4379-af99-28bcfb808a30" name="Apple" />
+			</route>
+			<route>
+				<flow-ref doc:name="Banana" doc:id="f068f6b6-0048-41ee-a29e-ccdc705d8c75" name="Banana" />
+			</route>
+		</scatter-gather>
+		<ee:transform doc:name="Java to Json" doc:id="2b634f4f-1617-46a8-b205-15242b3d33b2">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<sub-flow name="Apple" doc:id="58ce5cbc-a5d6-4515-b28c-28f83735eb64" >
+		<set-payload value='#["Apple"]' doc:name='"Apple"' doc:id="b133ee03-9228-4c49-a655-c5ca6f55f699" />
+	</sub-flow>
+	<sub-flow name="Banana" doc:id="575de72b-7e17-4749-8f5a-0dec6a0b7ff4" >
+		<set-payload value='#["Banana"]' doc:name='"Banana"' doc:id="164bd82e-3440-4eac-994c-f5dbf0ffba8c" />
+	</sub-flow>
+</mule>
